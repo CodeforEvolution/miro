@@ -2,6 +2,16 @@
  README
 ========
 
+Forker's Notes
+---------------------------------------------------------------------------------------------------------------------------------
+This Fork is supposed to be for adding the ability to run Miro on the Haiku Operating System:
+The website for it is found at: https://www.haiku-os.org
+
+As of this message, I'm aware that Miro has been discontinued, though I have tested the latest version on a modern platform and
+most of the features of it still work. I hope to after adding support for this new platform to even possibly modernize 
+the rest of the code.
+---------------------------------------------------------------------------------------------------------------------------------
+
 This repository holds source code for several components of Miro, the
 open and free Internet TV platform.  For more information about Miro,
 see:
