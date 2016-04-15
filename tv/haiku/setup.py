@@ -95,7 +95,7 @@ sys.path.insert(0, root_dir)
 # little hack to get the version from the current app.config.template
 
 app_config = os.path.join(resource_dir, 'app.config.template')
-appVersion = 6.0
+appVersion = "6"
 
 
 def getlogin():
@@ -485,6 +485,6 @@ setup(name='miro',
         'build': miro_build,
         'install_data': miro_install_data,
         'install_theme': install_theme,
-        'clean': clean,
+        'clean': clean
     }
 )

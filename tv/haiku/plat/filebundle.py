@@ -27,22 +27,11 @@
 # this exception statement from your version. If you delete this exception
 # statement from all source files in the program, then also delete it here.
 
-"""miro.plat.options -- Holds platform-specific command line options.
-Most/all of these are set in the miro.real script.  The values here are
-hopefully sane defaults.
-"""
+# This is in a separate file to prevent a circular import problem on
+# Windows.
 
-# these have no related prefs
-frontend = 'html'
-themeName = None
-user_home = "~/"
-override_dimensions = None
-
-from miro.prefs import Pref
-
-# build a lookup for preferences by alias
-PREFERENCES = {}
-for mem in dir():
-    p = locals()[mem]
-    if isinstance(p, Pref) and hasattr(p, "alias"):
-        PREFERENCES[p.alias] = p
+# A file bundle is a collection of files inside a directory.  This makes
+# sense on Mac only right now but we may want to expand for other platforms
+# in the future, and is currently a portable shim.
+def is_file_bundle(path):
+    return False

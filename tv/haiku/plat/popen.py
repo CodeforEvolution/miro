@@ -27,22 +27,10 @@
 # this exception statement from your version. If you delete this exception
 # statement from all source files in the program, then also delete it here.
 
-"""miro.plat.options -- Holds platform-specific command line options.
-Most/all of these are set in the miro.real script.  The values here are
-hopefully sane defaults.
-"""
+import subprocess
 
-# these have no related prefs
-frontend = 'html'
-themeName = None
-user_home = "~/"
-override_dimensions = None
-
-from miro.prefs import Pref
-
-# build a lookup for preferences by alias
-PREFERENCES = {}
-for mem in dir():
-    p = locals()[mem]
-    if isinstance(p, Pref) and hasattr(p, "alias"):
-        PREFERENCES[p.alias] = p
+def Popen(args, **kwargs):
+    """Like subprocess.Popen but make sure we get rid of any platform
+    quirks.  This is a nop on Haiku.
+    """
+    return subprocess.Popen(args, **kwargs)
