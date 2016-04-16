@@ -49,13 +49,15 @@ def load():
        with con:
 	
              cur = con.cursor() 
+
              cur.execute("SELECT * FROM Data")
-             con.close()
     	
              data = cur.fetchall()
+             con.commit()
 
              return data
- 
+             con.close()
+
 def save(data):
        with con:
     
@@ -64,6 +66,7 @@ def save(data):
              cur.execute("CREATE TABLE Data(Key TEXT)")
              cur.execute("INSERT INTO Data VALUES(?)", data)
 
+             con.commit()
              con.close()
 
 def get(descriptor):

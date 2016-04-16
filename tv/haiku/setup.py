@@ -203,6 +203,11 @@ def package_exists(package_name):
     # pkg-config returns 0 if the package is present
     return subprocess.call(['pkg-config', '--exists', package_name]) == 0
 
+ngrams_ext = \
+    Extension("miro.ngrams",
+        [os.path.join(portable_dir, 'ngrams.c')],
+    )
+
 namecollation_ext = \
     Extension("miro.data.namecollation",
         [os.path.join(portable_dir, 'data', 'namecollation.cpp')],
@@ -257,12 +262,14 @@ for root, dirs, files in os.walk(platform_extensions_dir):
         os.path.join('/boot/system/non-packaged/data/miro/resources/extensions/', extroot),
         files))
 
-# add the desktop file, mime data, and man page
+# add the  database file and man page
 data_files += [
     ('/boot/system/non-packaged/data/miro/resources',
      [os.path.join(root_dir, 'CREDITS')]),
     ('/boot/system/non-packaged/documentation/man/man1',
      [os.path.join(platform_dir, 'Miro.1')]),
+    ('/boot/home/config/settings/Miro',
+     [os.path.join(platform_dir, 'miro-config.db')]),
 ]
 
 #### Our specialized install_data command ####
@@ -340,7 +347,9 @@ class miro_build(build):
         output_dir = os.path.join(self.build_base, 'miro-segmenter')
         segmenter_objs = cc.compile([segmenter_src],
                                     output_dir=output_dir,
-                                    extra_preargs=(os.environ.get("CFLAGS") or "").split())
+                                    extra_preargs=(os.environ.get("CFLAGS") or "").
+
+split())
         cc.link_executable(segmenter_objs, 'miro-segmenter',
                            output_dir=output_dir)
         segmenter_exe = os.path.join(output_dir, 'miro-segmenter')
@@ -443,6 +452,7 @@ class clean(Command):
 
 
 ext_modules = []
+ext_modules.append(ngrams_ext)
 
 script_files += [os.path.join(platform_dir, 'Miro'),
                 ]
