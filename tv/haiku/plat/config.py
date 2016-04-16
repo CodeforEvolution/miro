@@ -29,9 +29,9 @@
 
 """miro.plat.config
 
-This module implements configuration persistence for the linux
-platform.  Miro persists configuration preferences for linux platform
-to gconf.
+This module implements configuration persistence for the haiku
+platform.  Miro persists configuration preferences for the haiku platform
+to a sqlite database file.
 
 Preferences are listed in miro.pref and also miro.plat.options.
 """
@@ -39,125 +39,32 @@ Preferences are listed in miro.pref and also miro.plat.options.
 import os
 import logging
 from miro import prefs
-import gconf
-import threading
+import sqlite3 as db
 from miro.plat import options
 from miro.plat import resources
 
-client = gconf.client_get_default()
-gconf_lock = threading.RLock()
-
-
-def gconf_key(key):
-    if options.gconf_name is None:
-        options.gconf_name = "miro"
-    return '/apps/%s/%s' % (options.gconf_name, key)
-
-
-def _convert_gconf_value(value):
-    if value.type == gconf.VALUE_STRING:
-        return value.get_string()
-    if value.type == gconf.VALUE_INT:
-        return value.get_int()
-    if value.type == gconf.VALUE_BOOL:
-        return value.get_bool()
-    if value.type == gconf.VALUE_FLOAT:
-        return value.get_float()
-    if value.type == gconf.VALUE_LIST:
-        return [_convert_gconf_value(v) for v in value.get_list()]
-    raise TypeError("unknown gconf type %s" % value.type)
-
-
-def _get_gconf(fullkey, default=None):
-    gconf_lock.acquire()
-    try:
-        value = client.get(fullkey)
-        if value != None:
-            try:
-                return _convert_gconf_value(value)
-            except TypeError, e:
-                logging.warn("type error while getting gconf value %s: %s",
-                        fullkey, str(e))
-        return default
-    finally:
-        gconf_lock.release()
-
-
-class GconfDict:
-    def get(self, key, default=None):
-        if not isinstance(key, str):
-            raise TypeError()
-
-        if "MIRO_%s" % key.upper() in os.environ:
-            return os.environ["MIRO_%s" % key.upper()]
-
-        fullkey = gconf_key(key)
-        return _get_gconf(fullkey, default)
-
-    def __contains__(self, key):
-        if "MIRO_%s" % key.upper() in os.environ:
-            return True
-
-        gconf_lock.acquire()
-        try:
-            fullkey = gconf_key(key)
-            return client.get(fullkey) is not None
-        finally:
-            gconf_lock.release()
-
-    def __getitem__(self, key):
-        rv = self.get(key)
-        if rv is None:
-            raise KeyError
-        else:
-            return rv
-
-    def __setitem__(self, key, value):
-        if "MIRO_%s" % key.upper() in os.environ:
-            return
-
-        gconf_lock.acquire()
-        try:
-            if not isinstance(key, str):
-                raise TypeError()
-
-            fullkey = gconf_key(key)
-            if isinstance(value, str):
-                client.set_string(fullkey, value)
-            elif isinstance(value, bool):
-                client.set_bool(fullkey, value)
-            elif isinstance(value, int):
-                client.set_int(fullkey, value)
-            elif isinstance(value, float):
-                client.set_float(fullkey, value)
-            elif isinstance(value, list):
-                # this is lame, but there isn't enough information to
-                # figure it out another way
-                if len(value) == 0 or isinstance(value[0], str):
-                    list_type = gconf.VALUE_STRING
-                elif isinstance(value[0], int):
-                    list_type = gconf.VALUE_INT
-                elif isinstance(value[0], float):
-                    list_type = gconf.VALUE_FLOAT
-                elif isinstance(value[0], bool):
-                    list_type = gconf.VALUE_BOOL
-                else:
-                    raise TypeError("unknown gconf type %s" % type(value[0]))
-
-                client.set_list(fullkey, list_type, value)
-            else:
-                raise TypeError()
-        finally:
-            gconf_lock.release()
-
+con = db.connect('/boot/home/config/settings/Miro/miro-config.db')
 
 def load():
-    return GconfDict()
+       with con:
+	
+             cur = con.cursor() 
+             cur.execute("SELECT * FROM Data")
+             con.close()
+    	
+             data = cur.fetchall()
 
-
+             return data
+ 
 def save(data):
-    pass
+       with con:
+    
+             cur = con.cursor()
+             cur.execute("DROP TABLE IF EXISTS Data")
+             cur.execute("CREATE TABLE Data(Key TEXT)")
+             cur.execute("INSERT INTO Data VALUES(?)", data)
 
+             con.close()
 
 def get(descriptor):
     value = descriptor.default
