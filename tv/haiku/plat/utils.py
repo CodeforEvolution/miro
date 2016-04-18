@@ -397,7 +397,7 @@ def get_ffmpeg_executable_path():
 
     :returns: string
     """
-    return app.config.get(options.FFMPEG_BINARY)
+    return "/bin/ffmpeg"
 
 
 def customize_ffmpeg_parameters(params):

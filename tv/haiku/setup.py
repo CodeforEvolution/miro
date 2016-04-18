@@ -453,6 +453,7 @@ class clean(Command):
 
 ext_modules = []
 ext_modules.append(ngrams_ext)
+ext_modules.append(namecollation_ext)
 
 script_files += [os.path.join(platform_dir, 'Miro'),
                 ]
