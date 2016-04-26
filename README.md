@@ -2,7 +2,7 @@
  README
 ========
 
-[![Build Status](https://travis-ci.org/CodeforEvolution/miro.svg?branch=master)](https://travis-ci.org/COdeforEvolution/Miro)
+[![Build Status](https://travis-ci.org/CodeforEvolution/miro.svg?branch=master)](https://travis-ci.org/CodeforEvolution/miro)
 
  Forker's Notes
 ================
