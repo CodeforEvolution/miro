@@ -2,9 +2,15 @@ language: python
 python:
   - 2.6
   - 2.7
+os:
+  - linux
+  - osx
+compiler:
+  - gcc
+  - clang
 install:
-  - sudo apt-get update
-  - virtualenv ~/virtualenv/python$TRAVIS_PYTHON_VERSION --system-site-packages
-  - sudo sh ./tv/linux/helperscripts/ubuntu_precise_12_04.sh
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update                                                        ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then virtualenv ~/virtualenv/python$TRAVIS_PYTHON_VERSION --system-site-packages; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo sh ./tv/linux/helperscripts/ubuntu_precise_12_04.sh                   ; fi
 script:
-  - cd tv/linux && ./test.sh -v
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd tv/linux && ./test.sh -v                                                ; fi
